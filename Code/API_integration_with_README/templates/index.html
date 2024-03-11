@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie Predictor</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: url("{{ url_for('static', path='reels_bg.jpeg') }}")
+          no-repeat;
+        background-size: cover;
+        background-position: center;
+      }
+
+      main {
+        width: 80%;
+        max-width: 600px;
+        margin: auto;
+        background: transparent;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(50px);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        color: #fff;
+        border-radius: 10px;
+        padding: 30px 40px;
+      }
+
+      h1 {
+        font-size: 36px;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      form {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+
+      .input-box {
+        position: relative;
+        width: 100%;
+        height: auto;
+      }
+
+      input[type="checkbox"] {
+        /* Increase the size of the checkbox */
+        transform: scale(1.5); /* Adjust the scale factor as needed */
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 40px;
+        font-size: 16px;
+        color: #fff;
+        padding: 10px 20px;
+        box-sizing: border-box;
+      }
+
+      textarea {
+        resize: vertical;
+        height: 100px; /* Set your desired height */
+      }
+
+      input::placeholder,
+      select::placeholder,
+      textarea::placeholder {
+        color: #fff;
+      }
+
+      label {
+        position: absolute;
+        top: 50%;
+        left: 20px;
+        transform: translateY(-50%);
+        color: #fff;
+        font-size: 16px;
+        pointer-events: none;
+        transition: 0.3s;
+        margin-top: 5px;
+      }
+
+      input:focus + label,
+      select:focus + label,
+      textarea:focus + label,
+      input:not(:placeholder-shown) + label,
+      select:not(:placeholder-shown) + label,
+      textarea:not(:placeholder-shown) + label {
+        top: 5px;
+        font-size: 14px;
+      }
+
+      button {
+        width: 100%;
+        height: 45px;
+        background: #fff;
+        border: none;
+        outline: none;
+        border-radius: 40px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        font-size: 16px;
+        color: #333;
+        font-weight: 600;
+        margin-top: 20px;
+      }
+
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
+
+      select {
+        height: 70px;
+      }
+
+      #result-container {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      #result-slot,
+      #verdict-slot {
+        font-size: 22px; /* Adjust font size as needed */
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <h1>Movie Revenue Predictor</h1>
+      <form id="movieForm">
+        <div class="input-box">
+          <input type="checkbox" name="adult" id="adult-box" />
+          <label for="adult-box">R-Rated</label>
+        </div>
+        <div class="input-box">
+          <input type="number" name="budget" id="budget" placeholder="Budget" />
+        </div>
+        <div class="input-box">
+          <select name="languages" id="languages">
+            <option value="" disabled selected hidden>Select a language</option>
+            <option value="0">English</option>
+            <option value="1">French</option>
+            <option value="2">Italian</option>
+            <option value="3">German</option>
+            <option value="4">Japanese</option>
+          </select>
+        </div>
+        <div class="input-box">
+          <textarea
+            name="overview"
+            id="overview"
+            placeholder="Overview"
+          ></textarea>
+        </div>
+        <div class="input-box">
+          <input
+            type="number"
+            name="popularity"
+            id="popularity"
+            placeholder="Popularity"
+          />
+        </div>
+        <div class="input-box">
+          <input
+            type="number"
+            name="runtime"
+            id="runtime"
+            placeholder="Runtime"
+          />
+        </div>
+        <div class="input-box">
+          <input
+            type="number"
+            name="vote_average"
+            id="vote_average"
+            placeholder="Vote Average"
+          />
+        </div>
+        <div class="input-box">
+          <input
+            type="number"
+            name="vote_count"
+            id="vote_count"
+            placeholder="Vote Count"
+          />
+        </div>
+        <div class="input-box">
+          <input
+            type="text"
+            name="keywords"
+            id="keywords"
+            placeholder="Keywords"
+          />
+        </div>
+        <div class="input-box">
+          <select name="directors" id="directors">
+            <option value="" disabled selected hidden>Director</option>
+            <option value="1">Oliver Stone</option>
+            <option value="2">Martin Scorsese</option>
+            <option value="3">Woody Allen</option>
+            <option value="4">Ridley Scott</option>
+            <option value="5">Wes Craven</option>
+            <option value="6">Clint Eastwood</option>
+            <option value="7">Ron Howard</option>
+            <option value="8">Joel Schumacher</option>
+            <option value="9">Walter Hill</option>
+            <option value="10">Barry Levinson</option>
+            <option value="11">Tim Burton</option>
+            <option value="12">Steven Soderbergh</option>
+            <option value="13">Robert Zemeckis</option>
+            <option value="14">John Carpenter</option>
+            <option value="15">Brian De Palma</option>
+            <option value="16">Steven Spielberg</option>
+            <option value="17">David Cronenberg</option>
+            <option value="18">Blake Edwards</option>
+            <option value="19">Alfred Hitchcock</option>
+            <option value="20">Billy Wilder</option>
+            <option value="0">Other</option>
+          </select>
+        </div>
+        <div class="input-box">
+          <select name="lead_actor" id="lead_actor">
+            <option value="" disabled selected hidden>Lead Actor</option>
+            <option value="1">Tom Hanks</option>
+            <option value="2">Robin Williams</option>
+            <option value="3">Jean-Claude Van Damme</option>
+            <option value="4">Robert De Niro</option>
+            <option value="5">John Travolta</option>
+            <option value="6">Sylvester Stallone</option>
+            <option value="7">Nicolas Cage</option>
+            <option value="8">Bruce Willis</option>
+            <option value="9">Johnny Depp</option>
+            <option value="10">Eddie Murphy</option>
+            <option value="11">Adam Sandler</option>
+            <option value="12">Mel Gibson</option>
+            <option value="13">Ben Stiller</option>
+            <option value="14">Denzel Washington</option>
+            <option value="15">Steven Seagal</option>
+            <option value="16">Kevin Costner</option>
+            <option value="17">Arnold Schwarzenegger</option>
+            <option value="18">Tom Cruise</option>
+            <option value="19">Clint Eastwood</option>
+            <option value="20">John Cusack</option>
+            <option value="0">Other</option>
+          </select>
+        </div>
+        <div class="input-box">
+          <input type="date" name="release-date" id="release-date" />
+          <label for="release-date">Release Date</label>
+        </div>
+        <div class="input-box">
+          <select name="primary-genre" id="primary-genre">
+            <option value="" disabled selected hidden>Genre 1</option>
+            <option value="0">Animation</option>
+            <option value="1">Adventure</option>
+            <option value="2">Romance</option>
+            <option value="3">Comedy</option>
+            <option value="4">Action</option>
+            <option value="5">Family</option>
+            <option value="6">History</option>
+            <option value="7">Drama</option>
+            <option value="8">Crime</option>
+            <option value="9">Fantasy</option>
+            <option value="10">Science Fiction</option>
+            <option value="12">Thriller</option>
+            <option value="13">Music</option>
+            <option value="14">Horror</option>
+            <option value="15">Documentary</option>
+            <option value="16">Mystery</option>
+            <option value="17">Western</option>
+            <option value="18">TV Movie</option>
+            <option value="19">War</option>
+            <option value="20">Foreign</option>
+          </select>
+        </div>
+        <div class="input-box">
+          <select name="secondary-genre" id="secondary-genre">
+            <option value="" disabled selected hidden>Genre 2</option>
+            <option value="0">Animation</option>
+            <option value="1">Adventure</option>
+            <option value="2">Romance</option>
+            <option value="3">Comedy</option>
+            <option value="4">Action</option>
+            <option value="5">Family</option>
+            <option value="6">History</option>
+            <option value="7">Drama</option>
+            <option value="8">Crime</option>
+            <option value="9">Fantasy</option>
+            <option value="10">Science Fiction</option>
+            <option value="12">Thriller</option>
+            <option value="13">Music</option>
+            <option value="14">Horror</option>
+            <option value="15">Documentary</option>
+            <option value="16">Mystery</option>
+            <option value="17">Western</option>
+            <option value="18">TV Movie</option>
+            <option value="19">War</option>
+            <option value="20">Foreign</option>
+          </select>
+        </div>
+        <div class="input-box">
+          <select name="ternary-genre" id="ternary-genre">
+            <option value="0">Animation</option>
+            <option value="1">Adventure</option>
+            <option value="2">Romance</option>
+            <option value="3">Comedy</option>
+            <option value="4">Action</option>
+            <option value="5">Family</option>
+            <option value="6">History</option>
+            <option value="7">Drama</option>
+            <option value="8">Crime</option>
+            <option value="9">Fantasy</option>
+            <option value="10">Science Fiction</option>
+            <option value="12">Thriller</option>
+            <option value="13">Music</option>
+            <option value="14">Horror</option>
+            <option value="15">Documentary</option>
+            <option value="16">Mystery</option>
+            <option value="17">Western</option>
+            <option value="18">TV Movie</option>
+            <option value="19">War</option>
+            <option value="20">Foreign</option>
+          </select>
+        </div>
+        <div><button type="submit" id="submit-button">Submit</button></div>
+      </form>
+      <div id="result-container">
+        <h4 id="result-slot"></h4>
+        <h5 id="verdict-slot"></h5>
+      </div>
+    </main>
+
+    <script>
+      document
+        .getElementById("movieForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault(); // prevent default form submission
+          console.log("Button");
+          const response = await fetch("/process", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              adult: document.getElementById("adult-box").checked ? 1 : 0,
+              budget: parseInt(document.getElementById("budget").value),
+              original_language: parseInt(
+                document.getElementById("languages").value
+              ),
+              overview: document.getElementById("overview").value,
+              popularity: parseInt(document.getElementById("popularity").value),
+              runtime: parseInt(document.getElementById("runtime").value),
+              vote_average: parseInt(
+                document.getElementById("vote_average").value
+              ),
+              vote_count: parseInt(document.getElementById("vote_count").value),
+              keywords: document.getElementById("keywords").value.split(","),
+              director: parseInt(document.getElementById("directors").value),
+              lead_actor: parseInt(document.getElementById("lead_actor").value),
+              release_month: parseInt(
+                document.getElementById("release-date").value.split("-")[1]
+              ),
+              release_day: parseInt(
+                document.getElementById("release-date").value.split("-")[2]
+              ),
+              primary_genre: parseInt(
+                document.getElementById("primary-genre").value
+              ),
+              secondary_genre: parseInt(
+                document.getElementById("secondary-genre").value
+              ),
+              ternary_genre: parseInt(
+                document.getElementById("ternary-genre").value
+              ),
+              primary_production_country: 0,
+            }),
+          });
+          if (response.status === 200) {
+            const data = await response.json();
+            document.getElementById(
+              "result-slot"
+            ).innerHTML = `Result is: $${data.revenue.toLocaleString()}`;
+            if (
+              data.revenue > parseInt(document.getElementById("budget").value)
+            ) {
+              document.getElementById("verdict-slot").innerHTML =
+                "This movie will be profitable!";
+            } else {
+              document.getElementById("verdict-slot").innerHTML =
+                "This movie will not be profitable :(";
+            }
+          }
+        });
+    </script>
+  </body>
+</html>
